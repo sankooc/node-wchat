@@ -1,20 +1,9 @@
-##  wechat
-
-微信公众/开放平台开发工具
-
-### 安装
-
-` npm install node-wchat --save `
-
-### 准备
-
-1. 添加ticket,token的存储策略 (可参考[RedisProvider](demo/redis_provider.js))
-2. 配置平台信息
-
-```
-
+var express = require('express');
+var app = express();
+var provider = require('./redis_provider');
 var mp = require('node-wchat').mp;
 var open = require('node-wchat').open;
+
 var _mp = mp({
     appid:  '',
     secret: '',
@@ -31,14 +20,32 @@ var _open = open({
     token:  ''
 },provider);
 
-```
+function parse_open_id(req,res,next){
+    if (req.session && req.session.openid) {
+        req.openid = req.session.openid;
+        return next();
+    }
+    var code = req.query.code;
+    _mp.parse_code(code,function(err,openid){
+        if(err){
+            console.error(err);
+            return res.status(400).end();
+        }
+        if(!openid){
+            console.error('no openid');
+            res.status(400).end();
+        }else{
+            req.openid = openid;
+            if (req.session) {
+                req.session.openid = openid;
+                req.session.save();
+            }
+            next();
+        }
+    });
+}
 
-### DEMO
-
-* 获取微信jssdk支付配置
-
-```
-
+//获取支付配置
 app.get('/option/pay',parse_open_id,function(req,res){
     var query = req.query;
     var content = req.content;
@@ -66,18 +73,10 @@ app.get('/option/pay',parse_open_id,function(req,res){
     });
 });
 
-```
-
-* 第三方平台接收component_verify_ticket
-
-```
+//接收component_verify_ticket
 app.post('/bind',_open.bind);
 
-```
-
-* 用户授权页
-
-```
+//进入授权页
 app.get('/authpage',function(req,res){
     _open.get_auth_code(function(err,code){
         if(err){
@@ -90,12 +89,7 @@ app.get('/authpage',function(req,res){
     });
 });
 
-```
-
-* 回调获取授权码
-
-```
-
+//回调url
 app.get('/platform',function(req,res){
     var auth = req.query;
     async.waterfall([function(callback){
@@ -108,23 +102,4 @@ app.get('/platform',function(req,res){
     });
 });
 
-```
-
-查看 [demo](demo/app.js)
-
-### 功能列表
-
-#### 公众平台
-
-* 用户管理
-* 消息管理 (待开发)
-* 微信支付
-* 自定义菜单 (待开发)
-* 扫一扫 (待开发)
-* 摇一摇 (待开发)
-* 微信卡券 (待开发)
-* 统计信息 (待开发)
-
-#### 第三方开发平台
-
-* 授权和绑定
+app.listen(8081, function(){});

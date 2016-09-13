@@ -1,3 +1,3 @@
-exports.platform = require('./platform');
-exports.dev_platform = require('./third');
-exports.common = require('./common');
+exports.mp = require('./lib/platform');
+exports.open = require('./lib/third');
+exports.common = require('./lib/common');

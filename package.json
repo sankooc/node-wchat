@@ -1,6 +1,6 @@
 {
   "name": "node-wchat",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "utils for wechat dev",
   "main": "index.js",
   "scripts": {
@@ -11,7 +11,6 @@
   "dependencies": {
     "async": "^2.0.1",
     "lodash": "^4.15.0",
-    "pug": "^2.0.0-beta6",
     "q": "^1.4.1",
     "request": "^2.74.0",
     "xml2js": "^0.4.17"
