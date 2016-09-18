@@ -1,5 +1,7 @@
 ##  wechat
 
+[![NPM](https://nodei.co/npm/node-wchat.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/node-wchat/)
+
 微信公众/开放平台开发工具
 
 ### 安装
